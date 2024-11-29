@@ -28,18 +28,19 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'thinkitive_app',
     'rest_framework',
-    'channels',
+    'channels',  
 ]
-
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
-    'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'django.contrib.auth.middleware.AuthenticationMiddleware', 
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
+
+
 
 ROOT_URLCONF = 'thinkitive_collaborate.urls'
 
@@ -67,10 +68,15 @@ WSGI_APPLICATION = 'thinkitive_collaborate.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'think',         
+        'USER': 'root',           
+        'PASSWORD': 'root',       
+        'HOST': 'localhost',      
+        'PORT': '3306',           
     }
 }
+
 
 
 # Password validation
@@ -115,7 +121,7 @@ STATIC_URL = 'static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
-ASGI_APPLICATION = 'collaborative_editor.asgi.application'
+ASGI_APPLICATION = 'thinkitive_collaborate.asgi.application'
 CHANNEL_LAYERS = {
     'default': {
         'BACKEND': 'channels_redis.core.RedisChannelLayer',
@@ -124,3 +130,8 @@ CHANNEL_LAYERS = {
         },
     },
 }
+
+LOGIN_URL = '/login/'  
+LOGIN_REDIRECT_URL = '/editor/1' 
+
+

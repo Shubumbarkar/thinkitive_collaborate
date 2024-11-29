@@ -1,25 +1,35 @@
-<textarea id="editor" rows="20" cols="100"></textarea>
-<ul id="suggestions"></ul>
-<script>
-    const ws = new WebSocket('ws://' + window.location.host + '/ws/editor/{{ doc_id }}/');
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document Editing</title>
+    <script>
+        const docId = "{{ doc_id }}"; 
+        const chatSocket = new WebSocket(
+            'ws://' + window.location.host + '/ws/editor/' + docId + '/'
+        );
 
-    const editor = document.getElementById('editor');
-    const suggestionsList = document.getElementById('suggestions');
+        chatSocket.onmessage = function(e) {
+            const data = JSON.parse(e.data);
+            document.getElementById('document-content').value = data.content;
+        };
 
-    ws.onmessage = function(event) {
-        const data = JSON.parse(event.data);
-        editor.value = data.content;
+        chatSocket.onclose = function(e) {
+            console.error('Chat socket closed unexpectedly');
+        };
 
-        // Display AI suggestions
-        suggestionsList.innerHTML = '';
-        data.suggestions.matches.forEach(match => {
-            const item = document.createElement('li');
-            item.textContent = match.message;
-            suggestionsList.appendChild(item);
+        document.getElementById('document-content').addEventListener('input', function(e) {
+            chatSocket.send(JSON.stringify({
+                'content': e.target.value
+            }));
         });
-    };
-
-    editor.addEventListener('input', function() {
-        ws.send(JSON.stringify({ content: editor.value }));
-    });
-</script>
+    </script>
+</head>
+<body>
+    <div class="container">
+        <h2>Document Editing</h2>
+        <textarea id="document-content" rows="10" cols="50"></textarea>
+    </div>
+</body>
+</html>
