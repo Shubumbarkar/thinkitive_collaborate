@@ -1,0 +1,25 @@
+<textarea id="editor" rows="20" cols="100"></textarea>
+<ul id="suggestions"></ul>
+<script>
+    const ws = new WebSocket('ws://' + window.location.host + '/ws/editor/{{ doc_id }}/');
+
+    const editor = document.getElementById('editor');
+    const suggestionsList = document.getElementById('suggestions');
+
+    ws.onmessage = function(event) {
+        const data = JSON.parse(event.data);
+        editor.value = data.content;
+
+        // Display AI suggestions
+        suggestionsList.innerHTML = '';
+        data.suggestions.matches.forEach(match => {
+            const item = document.createElement('li');
+            item.textContent = match.message;
+            suggestionsList.appendChild(item);
+        });
+    };
+
+    editor.addEventListener('input', function() {
+        ws.send(JSON.stringify({ content: editor.value }));
+    });
+</script>
